@@ -18,33 +18,21 @@ import Book from './Book';
 
 class Search extends React.Component {
 	state = {
-		searchTerm: '',
 		collection: []
 	};
 
 	bookSearch(term) {
 		BooksAPI.search(term).then((x) => this.setState({ collection: x }));
-  }
-  
-  addBook(id, title, subtitle, author){
-    BooksAPI.update({"id": id, "title": title, "subtitle": subtitle, "author": author}, 'wantToRead')
-  }
+	}
 
 	render() {
 		console.log(this.state.collection);
 
 		let bookResult = this.state.collection.map((x, i) => (
-      <Grid key={"book" + i} item >
-        <Book
-          title={x.title}
-          subtitle={x.subtitle}
-          imageLink={x.imageLinks.thumbnail}
-          authors={x.authors ? x.authors.toString() : x.publisher}
-          id={x.industryIdentifiers[1].identifier}
-          addFunction={() => this.addBook()}
-        />
-        </Grid> 
-		)); 
+			<Grid key={'book' + i} item>
+				<Book data={x} status="search" />
+			</Grid>
+		));
 
 		return (
 			<div style={{ flexGrow: 1 }}>
@@ -56,19 +44,19 @@ class Search extends React.Component {
 							</Button>
 						</Link>
 						<TextField
-							placeholder="Search…"
+							label="Search a book"
+							autoFocus = {true}
 							style={{ color: 'white' }}
 							value={this.state.searchTerm}
 							onChange={(x, y) => {
 								this.bookSearch(x.target.value);
-								this.setState({ searchTerm: x.target.value });
 							}}
 						/>
 					</Toolbar>
 				</AppBar>
-        <Grid container spacing={3}>
-				{bookResult}
-        </Grid>
+				<Grid container spacing={3}>
+					{bookResult}
+				</Grid>
 			</div>
 		);
 	}
