@@ -1,7 +1,6 @@
 import React from 'react';
-import * as BooksAPI from './BooksAPI';
 import './App.css';
-import { BrowserRouter as Router, Switch, Route, Link, useRouteMatch, Redirect, useParams } from 'react-router-dom';
+import { BrowserRouter as Route, Link, useRouteMatch, Redirect, useParams } from 'react-router-dom';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -17,22 +16,16 @@ import Grid from '@material-ui/core/Grid';
 import Book from './Book';
 
 class Search extends React.Component {
-	state = {
-		collection: []
-	};
-
-	bookSearch(term) {
-		BooksAPI.search(term).then((x) => this.setState({ collection: x }));
-	}
 
 	render() {
-		console.log(this.state.collection);
-
-		let bookResult = this.state.collection.map((x, i) => (
-			<Grid key={'book' + i} item>
-				<Book data={x} status="search" />
-			</Grid>
-		));
+		let bookResult =
+			this.props.collection &&
+			this.props.collection.length &&
+			this.props.collection.map((x, i) => (
+				<Grid key={'book' + i} item>
+					<Book data={x} addFunc={this.props.addFunc} status="search" />
+				</Grid>
+			));
 
 		return (
 			<div style={{ flexGrow: 1 }}>
@@ -45,17 +38,17 @@ class Search extends React.Component {
 						</Link>
 						<TextField
 							label="Search a book"
-							autoFocus = {true}
+							autoFocus={true}
 							style={{ color: 'white' }}
-							value={this.state.searchTerm}
+							value={this.props.searchTerm}
 							onChange={(x, y) => {
-								this.bookSearch(x.target.value);
+								this.props.searchFunc(x.target.value);
 							}}
 						/>
 					</Toolbar>
 				</AppBar>
 				<Grid container spacing={3}>
-					{bookResult}
+					{this.props.collection && this.props.collection.length && bookResult}
 				</Grid>
 			</div>
 		);

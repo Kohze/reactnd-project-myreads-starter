@@ -1,5 +1,4 @@
 import React from 'react';
-import * as BooksAPI from './BooksAPI';
 import './App.css';
 import Grid from '@material-ui/core/Grid';
 import { BrowserRouter as Router, Switch, Route, Link, useRouteMatch, useParams } from 'react-router-dom';
@@ -17,34 +16,11 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 
 class BookShelf extends React.Component {
-	state = {
-		books: '',
-		showSearchPage: false
-	};
-
-	componentDidMount() {
-		BooksAPI.getAll().then((x) => this.setState({ books: x }));
-  }
-  
-  componentWillUpdate() {
-    BooksAPI.getAll().then((x) => this.setState({ books: x }));
-  }
-
 	render() {
-		console.log(this.state.books);
-
-		const myBooks =
-			this.state.books &&
-			this.state.books.map((x, i) => (
-				<Grid key={'book' + i} item>
-					<Book data={x} status="bookView" />
-				</Grid>
-			));
-
 		const currentlyReadingShelf =
-		this.state.books && this.state.books.filter((x) => x.shelf === 'currentlyReading');
-		const wantToReadShelf = this.state.books && this.state.books.filter((x) => x.shelf === 'wantToRead');
-		const readShelf = this.state.books && this.state.books.filter((x) => x.shelf === 'read');
+			this.props.books && this.props.books.filter((x) => x.shelf === 'currentlyReading');
+		const wantToReadShelf = this.props.books && this.props.books.filter((x) => x.shelf === 'wantToRead');
+		const readShelf = this.props.books && this.props.books.filter((x) => x.shelf === 'read');
 
 		return (
 			<div className="app">
@@ -58,38 +34,35 @@ class BookShelf extends React.Component {
 					</Toolbar>
 				</AppBar>
 				<Card style={{ width: '100%', height: 50, textAlign: 'centered' }}>
-					
 					<h2> Currently Reading </h2>
 				</Card>
 				<Grid container spacing={3}>
 					{currentlyReadingShelf &&
 						currentlyReadingShelf.map((x, i) => (
 							<Grid key={'book' + i} item>
-								<Book data={x} status="bookView" />
+								<Book data={x} addFunc={this.props.addFunc} status="bookView" />
 							</Grid>
 						))}
 				</Grid>
 				<Card style={{ width: '100%', height: 50, textAlign: 'centered' }}>
-					
 					<h2> Want To Read </h2>
 				</Card>
 				<Grid container spacing={3}>
 					{wantToReadShelf &&
 						wantToReadShelf.map((x, i) => (
 							<Grid key={'book' + i} item>
-								<Book data={x} status="bookView" />
+								<Book data={x} addFunc={this.props.addFunc} status="bookView" />
 							</Grid>
 						))}
 				</Grid>
 				<Card style={{ width: '100%', height: 50, textAlign: 'centered' }}>
-					
 					<h2> Read </h2>
 				</Card>
 				<Grid container spacing={3}>
 					{readShelf &&
 						readShelf.map((x, i) => (
 							<Grid key={'book' + i} item>
-								<Book data={x} status="bookView" />
+								<Book data={x} addFunc={this.props.addFunc} status="bookView" />
 							</Grid>
 						))}
 				</Grid>

@@ -1,5 +1,4 @@
 import React from 'react';
-import * as BooksAPI from './BooksAPI';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route, Link, useRouteMatch, Redirect, useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -23,41 +22,29 @@ class Book extends React.Component {
 		inputValue: ''
 	};
 
-	addBook(data, purpose, deleteAfter = false) {
-        BooksAPI.update(data, purpose);
-        
-		deleteAfter && this.setState({ isActive: false });
-	}
-
 	render() {
-		console.log(this.props.data);
-
-		const actionSwitch =
-			this.props.status === 'search' ? (
-				<Button onClick={() => this.addBook(this.props.data, 'wantToRead', true)} size="small" color="primary">
-					Add Book
-				</Button>
-			) : (
-				<FormControl>
-					<InputLabel id="demo-simple-select-label">move</InputLabel>
-					<Select
-						labelId="demo-simple-select-label"
-						style={{ width: 150 }}
-						id="demo-simple-select"
-						label="move"
-						value={this.state.inputValue}
-						onChange={(x) => {
-							this.addBook(this.props.data, x.target.value);
-							this.setState({ inputValue: x.target.value });
-						}}
-					>
-						<MenuItem value={'currentlyReading'}>Currently Reading</MenuItem>
-						<MenuItem value={'wantToRead'}>Want To Read</MenuItem>
-						<MenuItem value={'read'}>Read</MenuItem>
-						<MenuItem value={'none'}>None</MenuItem>
-					</Select>
-				</FormControl>
-			);
+		const actionSwitch = (
+			<FormControl>
+				<InputLabel id="demo-simple-select-label">
+					{this.props.data.shelf ?  this.props.data.shelf : 'Add Book'}
+				</InputLabel>
+				<Select
+					style={{ width: 200 }}
+					label={this.props.data.shelf ? this.props.data.shelf : 'Add Book'}
+					value= {this.props.status === 'search' ? this.state.inputValue : this.state.inputValue }
+					onChange={(x) => {
+						this.props.addFunc(this.props.data, x.target.value);
+                        this.setState({ inputValue: x.target.value });
+                        this.props.status === 'search' && this.setState({ isActive: false });
+					}}
+				>
+					<MenuItem value={'currentlyReading'}>Currently Reading</MenuItem>
+					<MenuItem value={'wantToRead'}>Want To Read</MenuItem>
+					<MenuItem value={'read'}>Read</MenuItem>
+					<MenuItem value={'none'}>None</MenuItem>
+				</Select>
+			</FormControl>
+		);
 
 		const bookDisplay = (
 			<div style={{ flexGrow: 1 }}>
@@ -75,17 +62,17 @@ class Book extends React.Component {
 							}}
 						/>
 						<CardContent>
-							<Typography gutterBottom variant="p" component="h4">
+							<h4>
 								{this.props.data && this.props.data.title && this.props.data.title}
-							</Typography>
-							<Typography variant="body2" color="textSecondary" component="body1">
+                            </h4>
+							<h6>
 								{this.props.data && this.props.data.subtitle && this.props.data.subtitle}
-							</Typography>
+                            </h6>
 							<br />
 							<br />
-							<Typography variant="body2" color="textSecondary" component="body1">
+							<h6>
 								<b>{this.props.data && this.props.data.authors && this.props.data.authors}</b>
-							</Typography>
+                            </h6>
 						</CardContent>
 					</CardActionArea>
 					<CardActions>{actionSwitch}</CardActions>
